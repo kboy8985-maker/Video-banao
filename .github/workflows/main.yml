@@ -1,0 +1,28 @@
+name: Loop Video with Audio
+
+on:
+  workflow_dispatch: # Isse aap manual button daba kar start kar sakte hain
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Render Video
+        run: |
+          # video.mp4 aur audio.mp3 aapki repo mein honi chahiye
+          # -stream_loop -1 video ko infinity loop mein daal dega
+          # -shortest command video ko audio ki length par rok degi
+          ffmpeg -stream_loop -1 -i video.mp4 -i audio.mp3 -map 0:v:0 -map 1:a:0 -c:v libx264 -preset veryfast -crf 23 -c:a aac -shortest final_output.mp4
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stream-Ready-Video
+          path: final_output.mp4
+          
